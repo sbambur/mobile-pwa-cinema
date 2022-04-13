@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { AuthContext } from "context/AuthContext";
 import { Link as NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -16,6 +16,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { login } from "store/reducers/authReducer";
+import { useTypedSelector } from "hooks/TypedSelector";
+import { StyledProgress } from "./styles";
+import { CircularProgress } from "@mui/material";
 
 function Copyright(props: any) {
   return (
@@ -38,22 +42,32 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignIn() {
-  const [auth, setAuth] = React.useContext(AuthContext);
-  let location = useLocation();
+  const isUser = useTypedSelector((state) => state.user);
+  const [email, setEmail] = React.useState<string>("");
+  const [password, setPassword] = React.useState<string>("");
+  const location = useLocation();
+  const dispatch = useDispatch();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    setAuth(!auth);
+    dispatch(login({ email, password }));
 
     console.log({
       email: data.get("email"),
       password: data.get("password"),
     });
   };
-  if (auth) {
+
+  if (isUser.isAuth) {
     return <Navigate to="/" state={{ from: location }} replace />;
+  }
+
+  if (isUser.loading === "pending") {
+    <StyledProgress>
+      <CircularProgress />
+    </StyledProgress>;
   }
 
   return (
@@ -88,6 +102,8 @@ export default function SignIn() {
               label="Email Address"
               name="email"
               autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
               autoFocus
             />
             <TextField
@@ -99,6 +115,8 @@ export default function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

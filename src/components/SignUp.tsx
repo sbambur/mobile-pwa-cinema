@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { AuthContext } from "context/AuthContext";
 import { Link as NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -16,6 +16,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { registration } from "store/reducers/authReducer";
+import { useTypedSelector } from "hooks/TypedSelector";
 
 function Copyright(props: any) {
   return (
@@ -38,20 +40,25 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignUp() {
-  const [auth, setAuth] = React.useContext(AuthContext);
-  let location = useLocation();
+  const isAuth = useTypedSelector((state) => state.user.isAuth);
+  const [email, setEmail] = React.useState<string>("");
+  const [password, setPassword] = React.useState<string>("");
+  const location = useLocation();
+  const dispatch = useDispatch();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    setAuth(!auth);
+
+    dispatch(registration({ email, password }));
+
     console.log({
       email: data.get("email"),
       password: data.get("password"),
     });
   };
 
-  if (auth) {
+  if (isAuth) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
@@ -80,7 +87,7 @@ export default function SignUp() {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
                   name="firstName"
@@ -100,7 +107,8 @@ export default function SignUp() {
                   name="lastName"
                   autoComplete="family-name"
                 />
-              </Grid>
+              </Grid> */}
+
               <Grid item xs={12}>
                 <TextField
                   required
@@ -109,6 +117,8 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -120,6 +130,8 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                 />
               </Grid>
               <Grid item xs={12}>
