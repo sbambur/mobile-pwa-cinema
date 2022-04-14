@@ -8,13 +8,18 @@ import App from "./App";
 import { Global } from "@emotion/react";
 import { GlobalStyle } from "styles/global";
 
+import { store } from "store";
+import { Provider } from "react-redux";
+
 const container = document.getElementById("root");
 const root = createRoot(container);
 root.render(
   <>
-    <Router>
-      <App />
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <App />
+      </Router>
+    </Provider>
     <Global styles={GlobalStyle} />
   </>
 );

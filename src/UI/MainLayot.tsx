@@ -1,7 +1,5 @@
-import { FC, Suspense, useContext } from "react";
+import { FC, Suspense } from "react";
 import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
-
-import { AuthContext } from "context/AuthContext";
 
 import {
   Box,
@@ -14,6 +12,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 import { Container, Content, StyledProgress } from "components/styles";
+import { useTypedSelector } from "hooks/TypedSelector";
 
 interface MainLayoutProps {
   value: number;
@@ -21,11 +20,11 @@ interface MainLayoutProps {
 }
 
 const MainLayout: FC<MainLayoutProps> = ({ value, setValue }: any) => {
-  const [auth] = useContext(AuthContext);
+  const isAuth = useTypedSelector((state) => state.user.isAuth);
 
   let location = useLocation();
 
-  if (!auth) {
+  if (!isAuth) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
