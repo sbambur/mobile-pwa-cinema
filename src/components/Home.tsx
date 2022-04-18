@@ -1,47 +1,63 @@
-import { Button, List, ListItem, ListItemText } from "@mui/material";
-import { IUser } from "models/IUser";
-import { FC, useEffect, useState } from "react";
-import UserService from "service/UserService";
+import { CircularProgress, Stack } from "@mui/material";
+import { useActions } from "hooks/useActions";
+import { useTypedSelector } from "hooks/useTypedSelector";
+import { FC, useEffect } from "react";
+import HallCard from "components/HallCard";
+import { StyledProgress } from "components/styles";
+
+// Swiper test
+import { Swiper, SwiperSlide } from "swiper/react";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
+
+// import required modules
+import { Pagination } from "swiper";
 
 interface HomeProps {
-  setValue: any;
+  setValue: (value: number) => void;
 }
 
 const Home: FC<HomeProps> = ({ setValue }) => {
-  const [users, setUser] = useState<IUser[]>([]);
+  const { halls, loading } = useTypedSelector((state) => state.hall);
+  const { getHalls } = useActions();
 
   useEffect(() => {
     setValue(0);
+
+    if (!halls.length) {
+      getHalls();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getUsers = async () => {
-    try {
-      const response = await UserService.fetchUsers();
-      setUser(response.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   return (
-    <div>
-      <h1>Welcome to your PWA Homepage!</h1>
-      <Button variant="contained" onClick={getUsers}>
-        Получить пользоватлей
-      </Button>
-      <div>
-        <List>
-          {users.map((user) => {
-            return (
-              <ListItem key={user.email}>
-                <ListItemText primary={user.email} />
-              </ListItem>
-            );
-          })}
-        </List>
-      </div>
-    </div>
+    <>
+      <h1>
+        <span style={{ color: "#1976d2" }}>Miramax</span> cinema
+      </h1>
+      {loading ? (
+        <StyledProgress>
+          <CircularProgress />
+        </StyledProgress>
+      ) : (
+        <Stack direction="row" spacing={2} mt={5}>
+          <Swiper
+            slidesPerView={1.5}
+            spaceBetween={10}
+            modules={[Pagination]}
+            className="mySwiper"
+          >
+            {halls.map((hall) => (
+              <SwiperSlide key={hall.id}>
+                <HallCard hall={hall} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </Stack>
+      )}
+    </>
   );
 };
 

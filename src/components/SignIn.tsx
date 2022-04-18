@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { Link as NavLink } from "react-router-dom";
-import { useDispatch } from "react-redux";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -16,10 +15,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { login } from "store/reducers/authReducer";
-import { useTypedSelector } from "hooks/TypedSelector";
+import { useTypedSelector } from "hooks/useTypedSelector";
 import { StyledProgress } from "./styles";
 import { CircularProgress } from "@mui/material";
+import { useActions } from "hooks/useActions";
 
 function Copyright(props: any) {
   return (
@@ -46,13 +45,13 @@ export default function SignIn() {
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const location = useLocation();
-  const dispatch = useDispatch();
+  const { login } = useActions();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    dispatch(login({ email, password }));
+    login({ email, password });
 
     console.log({
       email: data.get("email"),
