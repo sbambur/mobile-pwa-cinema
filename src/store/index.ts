@@ -5,9 +5,11 @@ import {
 } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import userSlice from "./reducers/authReducer";
+import hallSlice from "./reducers/hallReducer";
 
 const reducer = combineReducers({
   user: userSlice.reducer,
+  hall: hallSlice.reducer,
 });
 
 export const store = createStore(reducer, applyMiddleware(thunk));

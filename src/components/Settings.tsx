@@ -1,21 +1,19 @@
 import { Button } from "@mui/material";
+import { useActions } from "hooks/useActions";
 import { FC } from "react";
-import { useDispatch } from "react-redux";
-import { logout } from "store/reducers/authReducer";
 
 const Settings: FC = () => {
-  const dispatch = useDispatch();
+  const { logout } = useActions();
 
   const logoutHandler = () => {
-    dispatch(logout());
-    window.location.reload();
+    logout();
   };
 
   return (
     <>
-      <h1>This is a App Settings </h1>
+      <h1>Профиль</h1>
       <Button variant="contained" onClick={logoutHandler}>
-        logout
+        Выйти
       </Button>
     </>
   );
