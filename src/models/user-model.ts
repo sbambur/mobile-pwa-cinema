@@ -1,11 +1,11 @@
 export interface IUser {
+  id: string;
   email: string;
   isActivated: boolean;
-  id: string;
 }
 
 export interface UserState {
-  loading: "idle" | "pending";
+  loading: boolean;
   user: IUser;
   isAuth: boolean;
 }

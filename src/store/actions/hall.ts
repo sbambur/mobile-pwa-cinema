@@ -44,3 +44,16 @@ export const reserveSeat = createAsyncThunk(
     }
   }
 );
+
+export const unreserveSeat = createAsyncThunk(
+  "hall/getHall",
+  async (updatedHall: IHall) => {
+    try {
+      const response = await HallService.reserveSeat(updatedHall);
+      return response.data;
+    } catch (e: any) {
+      console.log(e.response.data.message);
+      throw new Error("ошибка");
+    }
+  }
+);

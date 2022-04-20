@@ -15,7 +15,7 @@ export interface ISeatReq {
 }
 
 export interface ISeat {
-  id: number;
+  id: string;
   seatNumber: number;
   price: number;
   reserved: boolean;

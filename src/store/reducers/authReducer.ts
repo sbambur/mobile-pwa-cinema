@@ -5,7 +5,7 @@ import * as authAction from "store/actions/auth";
 const initialState = {
   user: {},
   isAuth: false,
-  loading: "idle",
+  loading: false,
 } as UserState;
 
 const userSlice = createSlice({
@@ -15,20 +15,20 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(authAction.login.pending, (state, action) => {
-        if (state.loading === "idle") {
-          state.loading = "pending";
+        if (!state.loading) {
+          state.loading = true;
         }
       })
       .addCase(authAction.login.fulfilled, (state, action) => {
-        if (state.loading === "pending") {
-          state.loading = "idle";
+        if (state.loading) {
+          state.loading = false;
           state.user = action!.payload!;
           state.isAuth = true;
         }
       })
       .addCase(authAction.login.rejected, (state, action) => {
-        if (state.loading === "pending") {
-          state.loading = "idle";
+        if (state.loading) {
+          state.loading = false;
         }
       })
       .addCase(authAction.logout.fulfilled, (state, action) => {
@@ -36,20 +36,20 @@ const userSlice = createSlice({
         state.isAuth = false;
       })
       .addCase(authAction.checkAuth.pending, (state, action) => {
-        if (state.loading === "idle") {
-          state.loading = "pending";
+        if (!state.loading) {
+          state.loading = true;
         }
       })
       .addCase(authAction.checkAuth.fulfilled, (state, action) => {
-        if (state.loading === "pending") {
-          state.loading = "idle";
+        if (state.loading) {
+          state.loading = false;
           state.user = action!.payload!;
           state.isAuth = true;
         }
       })
       .addCase(authAction.checkAuth.rejected, (state, action) => {
-        if (state.loading === "pending") {
-          state.loading = "idle";
+        if (state.loading) {
+          state.loading = false;
         }
       });
   },

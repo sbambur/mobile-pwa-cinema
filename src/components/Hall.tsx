@@ -2,14 +2,20 @@ import { Box, Button, Paper } from "@mui/material";
 import { useActions } from "hooks/useActions";
 import { useTypedSelector } from "hooks/useTypedSelector";
 import { IHall, ISeat } from "models/hall-model";
+import { ITicket } from "models/ticket-model";
 import { FC, useEffect, useLayoutEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const Hall: FC = () => {
-  const { halls } = useTypedSelector((state) => state.hall);
-  const [currentHall, setCurrentHall] = useState<IHall | null>(null);
-  const { getHall, reserveSeat } = useActions();
   const { id: hallId } = useParams();
+  const { id: userId } = useTypedSelector((state) => state.user.user);
+  const { halls } = useTypedSelector((state) => state.hall);
+
+  const hallFromStore = halls.find((hall) => hall.id === hallId)!;
+
+  const [currentHall, setCurrentHall] = useState<IHall>(hallFromStore);
+  const [sumWallets, setSumWallets] = useState<number>(0);
+  const { getHall, reserveSeat, saveTickets, getTickets } = useActions();
 
   useEffect(() => {
     getHall(hallId!);
@@ -17,20 +23,59 @@ const Hall: FC = () => {
   }, []);
 
   useLayoutEffect(() => {
-    setCurrentHall(halls.find((hall) => hall.id === hallId)!);
+    if (hallId) {
+      if (JSON.stringify(hallFromStore) !== JSON.stringify(currentHall)) {
+        setCurrentHall(hallFromStore);
+      }
+    }
   }, [hallId, halls]);
 
-  const reserveSeatLocal = (id: number) => {
-    return () => {
-      let updatedHall = {
-        ...currentHall,
-        seats: currentHall!.seats.map((seat: ISeat) => {
-          if (seat.id === id) return { ...seat, sale: !seat.reserved };
-          return seat;
-        }),
-      } as IHall;
-      setCurrentHall(updatedHall);
-    };
+  useEffect(() => {
+    if (currentHall) {
+      const sumWalletsCal = getHallsSum(currentHall);
+      if (sumWalletsCal !== sumWallets) {
+        setSumWallets(sumWalletsCal);
+      }
+    }
+  }, [currentHall]);
+
+  const reserveSeatLocal = (id: string) => {
+    let updatedHall = {
+      ...currentHall,
+      seats: currentHall!.seats.map((seat: ISeat) => {
+        if (seat.id === id) return { ...seat, sale: !seat.sale };
+        return seat;
+      }),
+    } as IHall;
+    setCurrentHall(updatedHall);
+  };
+
+  const getHallsSum = (hall: IHall) => {
+    const sum = hall.seats.reduce((acc: number, seat: ISeat) => {
+      if (seat.sale) {
+        acc += +seat.price;
+      }
+      return acc;
+    }, 0);
+    return sum;
+  };
+
+  const saveAndReserve = () => {
+    const reserveSeats = currentHall.seats.filter((seat) => seat.sale);
+    const ticketsBuy = reserveSeats.map((seat) => {
+      return {
+        user: userId,
+        hall: currentHall.id,
+        seat: seat.id,
+        seatNumber: seat.seatNumber,
+        price: seat.price,
+        pos: seat.pos,
+      } as ITicket;
+    });
+
+    saveTickets(ticketsBuy);
+    reserveSeat(currentHall);
+    getTickets(userId);
   };
 
   if (!currentHall) {
@@ -64,7 +109,7 @@ const Hall: FC = () => {
           return (
             <div
               key={seat.id}
-              onClick={reserveSeatLocal(seat.id)}
+              onClick={() => reserveSeatLocal(seat.id)}
               style={{
                 background: seat.reserved
                   ? "#c1c1c1"
@@ -98,11 +143,12 @@ const Hall: FC = () => {
             justifyContent: "space-between",
           }}
         >
-          <div>Сумма: 0 руб</div>
+          <div>Сумма: {sumWallets} руб</div>
           <Button
             variant="contained"
             size="large"
-            onClick={() => reserveSeat(currentHall)}
+            onClick={() => saveAndReserve()}
+            disabled={sumWallets ? false : true}
           >
             Оплатить
           </Button>

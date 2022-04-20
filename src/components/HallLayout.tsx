@@ -1,11 +1,5 @@
 import { FC, Suspense } from "react";
-import {
-  Link,
-  Navigate,
-  Outlet,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { Box, Button, CircularProgress, Paper } from "@mui/material";
 

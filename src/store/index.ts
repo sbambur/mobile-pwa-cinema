@@ -6,10 +6,12 @@ import {
 import thunk from "redux-thunk";
 import userSlice from "./reducers/authReducer";
 import hallSlice from "./reducers/hallReducer";
+import ticketSlice from "./reducers/ticketReducer";
 
 const reducer = combineReducers({
   user: userSlice.reducer,
   hall: hallSlice.reducer,
+  ticket: ticketSlice.reducer,
 });
 
 export const store = createStore(reducer, applyMiddleware(thunk));

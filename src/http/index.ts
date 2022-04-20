@@ -10,6 +10,7 @@ export const ENDPOINTS = {
   LOGOUT: "/logout",
   HALLS: "/halls",
   USERS: "/users",
+  TICKETS: "/tickets",
 };
 
 const $api = axios.create({

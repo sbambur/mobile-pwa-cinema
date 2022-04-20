@@ -63,7 +63,7 @@ export default function SignIn() {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  if (isUser.loading === "pending") {
+  if (isUser.loading) {
     <StyledProgress>
       <CircularProgress />
     </StyledProgress>;
