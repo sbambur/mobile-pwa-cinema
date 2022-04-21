@@ -3,13 +3,13 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { IHall } from "models/hall-model";
+import { ISession } from "models/session-model";
 import { Link } from "react-router-dom";
 import { Button, Rating } from "@mui/material";
 import { Box } from "@mui/system";
 
 interface HallCardProps {
-  hall: IHall;
+  hall: ISession;
 }
 
 const HallCard: React.FC<HallCardProps> = ({ hall }) => {

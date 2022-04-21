@@ -3,7 +3,7 @@ import { IconButton, List } from "@mui/material";
 import { useActions } from "hooks/useActions";
 import { useTypedSelector } from "hooks/useTypedSelector";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IHall, ISeat } from "models/hall-model";
+import { IHall, ISeat } from "models/session-model";
 
 const Wallet: FC = () => {
   const { id: userId } = useTypedSelector((state) => state.user.user);

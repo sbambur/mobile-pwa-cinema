@@ -1,53 +1,53 @@
 import { Box, Button, Paper } from "@mui/material";
 import { useActions } from "hooks/useActions";
 import { useTypedSelector } from "hooks/useTypedSelector";
-import { IHall, ISeat } from "models/hall-model";
+import { ISession } from "models/session-model";
 import { ITicket } from "models/ticket-model";
 import { FC, useEffect, useLayoutEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const Hall: FC = () => {
-  const { id: hallId } = useParams();
+  const { id: sessionId } = useParams();
   const { id: userId } = useTypedSelector((state) => state.user.user);
-  const { halls } = useTypedSelector((state) => state.hall);
+  const { sessions } = useTypedSelector((state) => state.hall);
 
-  const hallFromStore = halls.find((hall) => hall.id === hallId)!;
+  const hallFromStore = sessions.find((session) => session.id === sessionId)!;
 
-  const [currentHall, setCurrentHall] = useState<IHall>(hallFromStore);
+  const [currentSession, setcurrentSession] = useState<ISession>(hallFromStore);
   const [sumWallets, setSumWallets] = useState<number>(0);
-  const { getHall, reserveSeat, saveTickets, getTickets } = useActions();
+  const { getSession, saveTickets, getTickets } = useActions();
 
   useEffect(() => {
-    getHall(hallId!);
+    sessionId && getSession(sessionId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useLayoutEffect(() => {
-    if (hallId) {
-      if (JSON.stringify(hallFromStore) !== JSON.stringify(currentHall)) {
-        setCurrentHall(hallFromStore);
+    if (sessionId) {
+      if (JSON.stringify(hallFromStore) !== JSON.stringify(currentSession)) {
+        setcurrentSession(hallFromStore);
       }
     }
-  }, [hallId, halls]);
+  }, [sessionId, sessions]);
 
   useEffect(() => {
-    if (currentHall) {
-      const sumWalletsCal = getHallsSum(currentHall);
+    if (currentSession) {
+      const sumWalletsCal = getHallsSum(currentSession);
       if (sumWalletsCal !== sumWallets) {
         setSumWallets(sumWalletsCal);
       }
     }
-  }, [currentHall]);
+  }, [currentSession]);
 
   const reserveSeatLocal = (id: string) => {
     let updatedHall = {
-      ...currentHall,
-      seats: currentHall!.seats.map((seat: ISeat) => {
+      ...currentSession,
+      seats: currentSession!.seats.map((seat: ISeat) => {
         if (seat.id === id) return { ...seat, sale: !seat.sale };
         return seat;
       }),
     } as IHall;
-    setCurrentHall(updatedHall);
+    setcurrentSession(updatedHall);
   };
 
   const getHallsSum = (hall: IHall) => {
@@ -61,11 +61,11 @@ const Hall: FC = () => {
   };
 
   const saveAndReserve = () => {
-    const reserveSeats = currentHall.seats.filter((seat) => seat.sale);
+    const reserveSeats = currentSession.seats.filter((seat) => seat.sale);
     const ticketsBuy = reserveSeats.map((seat) => {
       return {
         user: userId,
-        hall: currentHall.id,
+        hall: currentSession.id,
         seat: seat.id,
         seatNumber: seat.seatNumber,
         price: seat.price,
@@ -74,19 +74,20 @@ const Hall: FC = () => {
     });
 
     saveTickets(ticketsBuy);
-    reserveSeat(currentHall);
+    reserveSeat(currentSession);
     getTickets(userId);
   };
 
-  if (!currentHall) {
+  if (!currentSession) {
     return <div>упс</div>;
   }
 
   return (
     <>
-      <h3>Зал: {currentHall.title}</h3>
+      <h3>Зал: {currentSession.title}</h3>
       <p>
-        фильм: {currentHall.movie ? currentHall.movie.title : "А фильма нет"}{" "}
+        фильм:{" "}
+        {currentSession.movie ? currentSession.movie.title : "А фильма нет"}{" "}
       </p>
 
       <Paper
@@ -105,7 +106,7 @@ const Hall: FC = () => {
           margin: "0 auto",
         }}
       >
-        {currentHall.seats.map((seat) => {
+        {currentSession.seats.map((seat) => {
           return (
             <div
               key={seat.id}

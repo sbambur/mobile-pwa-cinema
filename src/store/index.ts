@@ -5,12 +5,12 @@ import {
 } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import userSlice from "./reducers/authReducer";
-import hallSlice from "./reducers/hallReducer";
+import sessionSlice from "./reducers/sessionReducer";
 import ticketSlice from "./reducers/ticketReducer";
 
 const reducer = combineReducers({
   user: userSlice.reducer,
-  hall: hallSlice.reducer,
+  hall: sessionSlice.reducer,
   ticket: ticketSlice.reducer,
 });
 

@@ -20,14 +20,14 @@ interface HomeProps {
 }
 
 const Home: FC<HomeProps> = ({ setValue }) => {
-  const { halls, loading } = useTypedSelector((state) => state.hall);
-  const { getHalls } = useActions();
+  const { sessions, loading } = useTypedSelector((state) => state.hall);
+  const { getSessions } = useActions();
 
   useEffect(() => {
     setValue(0);
 
-    if (!halls.length) {
-      getHalls();
+    if (!sessions.length) {
+      getSessions();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -49,9 +49,9 @@ const Home: FC<HomeProps> = ({ setValue }) => {
             modules={[Pagination]}
             className="mySwiper"
           >
-            {halls.map((hall) => (
-              <SwiperSlide key={hall.id}>
-                <HallCard hall={hall} />
+            {sessions.map((session) => (
+              <SwiperSlide key={session.id}>
+                <HallCard hall={session} />
               </SwiperSlide>
             ))}
           </Swiper>

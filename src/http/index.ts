@@ -8,9 +8,10 @@ export const ENDPOINTS = {
   REGISTRATION: "/registration",
   REFRESH: "/refresh",
   LOGOUT: "/logout",
-  HALLS: "/halls",
+  SESSIONS: "/sessions",
   USERS: "/users",
   TICKETS: "/tickets",
+  SCHEME: "/scheme",
 };
 
 const $api = axios.create({
