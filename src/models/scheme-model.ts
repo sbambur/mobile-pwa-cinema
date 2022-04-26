@@ -8,6 +8,7 @@ export interface ISeat {
   seatNumber: number;
   price: number;
   pos: IPos;
+  sale?: boolean;
 }
 
 export interface IScheme {
@@ -18,5 +19,4 @@ export interface IScheme {
 export interface SchemeState {
   scheme: IScheme[];
   loading: boolean;
-  error: any;
 }

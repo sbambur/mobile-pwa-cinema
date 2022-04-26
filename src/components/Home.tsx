@@ -21,11 +21,11 @@ interface HomeProps {
 
 const Home: FC<HomeProps> = ({ setValue }) => {
   const { sessions, loading } = useTypedSelector((state) => state.hall);
-  const { getSessions } = useActions();
+  const { getSessions, getScheme } = useActions();
 
   useEffect(() => {
     setValue(0);
-
+    getScheme();
     if (!sessions.length) {
       getSessions();
     }

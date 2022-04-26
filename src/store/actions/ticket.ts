@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { ITicket } from "models/ticket-model";
+import { ITicketReq } from "models/ticket-model";
 import TicketService from "service/TicketService";
 
 export const getTickets = createAsyncThunk(
@@ -17,7 +17,7 @@ export const getTickets = createAsyncThunk(
 
 export const saveTickets = createAsyncThunk(
   "ticket/saveTickets",
-  async (tickets: ITicket[]) => {
+  async (tickets: ITicketReq[]) => {
     try {
       console.log(tickets);
 

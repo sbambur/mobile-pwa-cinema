@@ -1,9 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import SessionService from "service/SessionServices";
 
-export const getSessions = createAsyncThunk("hall/getHalls", async () => {
+export const getSessions = createAsyncThunk("session/getSessions", async () => {
   try {
-    const response = await SessionService.getHalls();
+    const response = await SessionService.getSessions();
     return response.data;
   } catch (e: any) {
     console.log(e.response.data.message);
@@ -13,10 +13,10 @@ export const getSessions = createAsyncThunk("hall/getHalls", async () => {
 });
 
 export const getSession = createAsyncThunk(
-  "hall/getHall",
+  "session/getSession",
   async (id: string) => {
     try {
-      const response = await SessionService.getOneHall(id);
+      const response = await SessionService.getOneSession(id);
       return response.data;
     } catch (e: any) {
       console.log(e.response.data.message);

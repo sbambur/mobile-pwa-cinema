@@ -1,3 +1,15 @@
+export interface ITicketReq {
+  user: string;
+  hall: string;
+  seat: string;
+  seatNumber: number;
+  price: number;
+  pos: {
+    row: string;
+    seat: string;
+  };
+}
+
 export interface ITicket {
   id: string;
   user: string;

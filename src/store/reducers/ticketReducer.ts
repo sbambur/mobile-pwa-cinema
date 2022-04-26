@@ -29,9 +29,6 @@ const ticketSlice = createSlice({
           state.loading = false;
         }
       })
-      .addCase(ticketActions.saveTickets.fulfilled, (state, action) => {
-        state.tickets = [...state.tickets, action.payload];
-      })
       .addCase(ticketActions.deleteTicket.fulfilled, (state, action) => {
         let newTickets = state.tickets.map((ticket) => {
           if (ticket.id === action.payload.id) {

@@ -1,8 +1,9 @@
 import { Box, Button, Paper } from "@mui/material";
 import { useActions } from "hooks/useActions";
 import { useTypedSelector } from "hooks/useTypedSelector";
+import { IScheme, ISeat } from "models/scheme-model";
 import { ISession } from "models/session-model";
-import { ITicket } from "models/ticket-model";
+import { ITicketReq } from "models/ticket-model";
 import { FC, useEffect, useLayoutEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -10,11 +11,12 @@ const Hall: FC = () => {
   const { id: sessionId } = useParams();
   const { id: userId } = useTypedSelector((state) => state.user.user);
   const { sessions } = useTypedSelector((state) => state.hall);
+  const { scheme } = useTypedSelector((state) => state.scheme);
 
-  const hallFromStore = sessions.find((session) => session.id === sessionId)!;
-
-  const [currentSession, setcurrentSession] = useState<ISession>(hallFromStore);
+  const [currentSession, setcurrentSession] = useState<ISession | null>(null);
+  const [currentHall, setCurrentHall] = useState<IScheme | null>(null);
   const [sumWallets, setSumWallets] = useState<number>(0);
+
   const { getSession, saveTickets, getTickets } = useActions();
 
   useEffect(() => {
@@ -22,35 +24,47 @@ const Hall: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useLayoutEffect(() => {
-    if (sessionId) {
-      if (JSON.stringify(hallFromStore) !== JSON.stringify(currentSession)) {
-        setcurrentSession(hallFromStore);
-      }
-    }
-  }, [sessionId, sessions]);
-
   useEffect(() => {
-    if (currentSession) {
-      const sumWalletsCal = getHallsSum(currentSession);
+    if (currentHall) {
+      const sumWalletsCal = getHallsSum(currentHall!);
       if (sumWalletsCal !== sumWallets) {
         setSumWallets(sumWalletsCal);
       }
     }
-  }, [currentSession]);
+  }, [currentHall]);
+
+  useLayoutEffect(() => {
+    if (sessionId) {
+      const sessionFromStore = sessions.find(
+        (session) => session.id === sessionId
+      );
+      if (
+        JSON.stringify(sessionFromStore) !== JSON.stringify(currentSession) &&
+        sessionFromStore
+      ) {
+        setcurrentSession(sessionFromStore);
+      }
+
+      const finder = scheme.find(
+        (schemeOne) => schemeOne.id === currentSession?.hall
+      ) as IScheme;
+
+      setCurrentHall(finder);
+    }
+  }, [sessionId, sessions]);
 
   const reserveSeatLocal = (id: string) => {
     let updatedHall = {
-      ...currentSession,
-      seats: currentSession!.seats.map((seat: ISeat) => {
+      ...currentHall,
+      seats: currentHall!.seats.map((seat: ISeat) => {
         if (seat.id === id) return { ...seat, sale: !seat.sale };
         return seat;
       }),
-    } as IHall;
-    setcurrentSession(updatedHall);
+    } as IScheme;
+    setCurrentHall(updatedHall);
   };
 
-  const getHallsSum = (hall: IHall) => {
+  const getHallsSum = (hall: IScheme) => {
     const sum = hall.seats.reduce((acc: number, seat: ISeat) => {
       if (seat.sale) {
         acc += +seat.price;
@@ -61,20 +75,21 @@ const Hall: FC = () => {
   };
 
   const saveAndReserve = () => {
-    const reserveSeats = currentSession.seats.filter((seat) => seat.sale);
+    const reserveSeats = currentHall!.seats.filter((seat) => seat.sale);
     const ticketsBuy = reserveSeats.map((seat) => {
       return {
         user: userId,
-        hall: currentSession.id,
+        hall: currentHall!.id,
         seat: seat.id,
         seatNumber: seat.seatNumber,
         price: seat.price,
         pos: seat.pos,
-      } as ITicket;
+      } as ITicketReq;
     });
 
+    console.log(JSON.stringify(ticketsBuy));
+
     saveTickets(ticketsBuy);
-    reserveSeat(currentSession);
     getTickets(userId);
   };
 
@@ -106,29 +121,25 @@ const Hall: FC = () => {
           margin: "0 auto",
         }}
       >
-        {currentSession.seats.map((seat) => {
-          return (
-            <div
-              key={seat.id}
-              onClick={() => reserveSeatLocal(seat.id)}
-              style={{
-                background: seat.reserved
-                  ? "#c1c1c1"
-                  : seat.sale
-                  ? "#48c04e"
-                  : "#fff",
-
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {seat.pos.seat}
-              <br />
-            </div>
-          );
-        })}
+        {currentHall &&
+          currentHall.seats.map((seat) => {
+            return (
+              <div
+                key={seat.id}
+                onClick={() => reserveSeatLocal(seat.id)}
+                style={{
+                  background: seat.sale ? "#48c04e" : "#fff",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {seat.pos.seat}
+                <br />
+              </div>
+            );
+          })}
       </div>
 
       <Box sx={{ width: "100%" }}>
