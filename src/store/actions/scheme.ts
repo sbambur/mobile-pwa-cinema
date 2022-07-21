@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import SchemeService from "service/SchemeService";
+import SchemeService from "api/services/SchemeService";
 
 export const getScheme = createAsyncThunk("scheme/getScheme", async () => {
   try {

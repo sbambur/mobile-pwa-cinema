@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import SignIn from "components/SignIn";
 import SignUp from "components/SignUp";
-import MainLayout from "UI/MainLayot";
+import MainLayout from "layouts/MainLayot";
 import { useActions } from "hooks/useActions";
 import Hall from "components/Hall";
 import HallLayout from "components/HallLayout";

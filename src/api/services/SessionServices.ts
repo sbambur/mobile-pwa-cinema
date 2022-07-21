@@ -1,4 +1,4 @@
-import $api, { ENDPOINTS } from "../http";
+import $api, { ENDPOINTS } from "..";
 import { AxiosResponse } from "axios";
 import { ISession } from "models/session-model";
 

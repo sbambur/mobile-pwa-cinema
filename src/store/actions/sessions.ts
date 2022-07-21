@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import SessionService from "service/SessionServices";
+import SessionService from "api/services/SessionServices";
 
 export const getSessions = createAsyncThunk("session/getSessions", async () => {
   try {
